@@ -10,6 +10,20 @@ page section — and the dashboard builds a live landing page preview on localho
 
 Then open **http://localhost:5173**. No dependencies, no build step.
 
+
+## Guided flow (for non-technical users)
+
+A 3-step tracker sits at the top of every view, and each view ends with a call-to-action bar
+telling you exactly what to do next:
+
+1. **Add your animations** — "+ Import Link", paste the link, say where it will be used → *Step 2: Add brand details →*
+2. **Add brand details** — name, logo, colours, headline, button text → *Step 3: Build my landing page →*
+3. **Build & preview the page** — pick an animation per section → **▶ Generate landing page preview** opens the
+   finished page in a new tab, or **Download page file** saves it.
+
+A dismissible "Make a landing page in 3 steps" card explains the process on first visit.
+Completed steps get a green tick, and any step can be clicked to jump straight to it.
+
 ## The three views
 
 ### 🎬 Animation Library

@@ -293,3 +293,101 @@ function autoAssign(){
   writeJSON(LAYOUT_KEY, layout);
 }
 autoAssign();
+
+/* ================= guided 3-step flow (for non-technical users) ================= */
+const GUIDE_KEY = 'animlib.guide.seen';
+const STEPS = [
+  { view:'library', title:'Add your animations',
+    desc:'Paste the link of every animation you want to use.' },
+  { view:'brand', title:'Add brand details',
+    desc:'Brand name, logo, colours and the words for the page.' },
+  { view:'builder', title:'Build & preview the page',
+    desc:'Pick an animation for each part of the page, then see it live.' }
+];
+let currentView = 'library';
+
+function stepDone(i){
+  if(i === 0) return items.length > 0;
+  if(i === 1) return !!localStorage.getItem(BRAND_KEY);
+  return Object.values(layout).filter(l => l && l.animId).length > 0;
+}
+function renderStepper(){
+  q('#stepper').innerHTML = STEPS.map((s,i) => {
+    const done = stepDone(i), active = s.view === currentView;
+    return `<div class="step ${active?'active':''} ${done && !active?'done':''}" data-go="${s.view}">
+      <span class="num">${done && !active ? '✓' : (i+1)}</span>
+      <span><b>Step ${i+1} — ${s.title}</b><small>${s.desc}</small></span></div>`;
+  }).join('');
+  q('#stepper').querySelectorAll('[data-go]').forEach(el => el.onclick = () => setView(el.dataset.go));
+}
+
+function renderHowto(){
+  const el = q('#howto');
+  el.hidden = localStorage.getItem(GUIDE_KEY) === '1' || currentView !== 'library';
+  if(el.hidden) return;
+  el.innerHTML = `<h2>Make a landing page in 3 steps</h2>
+    <p>No coding needed. Follow the steps and the dashboard builds a real landing page you can look at and share.</p>
+    <ol>
+      <li><b>Add animations</b> — <span>click “+ Import Link”, paste the animation link, say where it will be used.</span></li>
+      <li><b>Add brand details</b> — <span>brand name, logo, colours, headline and button text.</span></li>
+      <li><b>Build &amp; preview</b> — <span>choose an animation for the header, hero, footer… and the page appears on the right.</span></li>
+    </ol>
+    <div class="howto-actions">
+      <button class="btn primary" id="guideStart">Start with step 1 →</button>
+      <button class="btn ghost" id="guideHide">Don't show this again</button>
+    </div>`;
+  q('#guideStart').onclick = () => q('#addBtn').click();
+  q('#guideHide').onclick = () => { localStorage.setItem(GUIDE_KEY,'1'); el.hidden = true; };
+}
+
+/* per-view call-to-action bars */
+function ctaBar(view){
+  let host = q('#cta-' + view);
+  if(!host){ host = document.createElement('div'); host.id = 'cta-' + view; host.className = 'cta-bar';
+    q('#view-' + view).appendChild(host); }
+  if(view === 'library'){
+    const n = items.length;
+    host.className = 'cta-bar' + (n ? ' hero-cta' : '');
+    host.innerHTML = `<div class="txt"><b>${n ? `${n} animation${n===1?'':'s'} in your library` : 'Add your first animation'}</b>
+      <small>${n ? 'Next, tell us about the brand — name, logo and colours for the landing page.' : 'Click “+ Import Link” above and paste an animation link to begin.'}</small></div>
+      ${n ? '<button class="btn primary big" data-go="brand">Step 2: Add brand details →</button>'
+          : '<button class="btn primary big" id="ctaAdd">+ Import Link</button>'}`;
+    if(!n) q('#ctaAdd').onclick = () => q('#addBtn').click();
+  }
+  if(view === 'brand'){
+    host.className = 'cta-bar hero-cta';
+    host.innerHTML = `<div class="txt"><b>Brand details ready?</b>
+      <small>Save them, then choose which animation goes in the header, hero, footer and the rest.</small></div>
+      <button class="btn ghost" id="ctaSaveBrand">Save brand kit</button>
+      <button class="btn primary big" data-go="builder">Step 3: Build my landing page →</button>`;
+    q('#ctaSaveBrand').onclick = () => { saveBrand(); toast('Brand kit saved'); renderStepper(); };
+  }
+  if(view === 'builder'){
+    const filled = Object.values(layout).filter(l => l && l.animId).length;
+    host.className = 'cta-bar hero-cta';
+    host.innerHTML = `<div class="txt"><b>${filled} of ${PAGE_SLOTS.length} page sections have an animation</b>
+      <small>Press the button to build the landing page — it opens in a new tab, exactly as visitors would see it.</small></div>
+      <button class="btn ghost" id="ctaDownload">Download page file</button>
+      <button class="btn primary big" id="ctaGenerate">▶ Generate landing page preview</button>`;
+    q('#ctaGenerate').onclick = () => {
+      buildPreview();
+      window.open(pageBlobURL, '_blank');
+      toast('Landing page generated — opened in a new tab');
+      renderStepper();
+    };
+    q('#ctaDownload').onclick = () => q('#downloadPage').click();
+  }
+  host.querySelectorAll('[data-go]').forEach(b => b.onclick = () => setView(b.dataset.go));
+}
+
+/* wire the guided flow into the existing view / render cycle */
+const _setView = setView, _render = render, _buildPreview = buildPreview;
+setView = function(v){
+  currentView = v;
+  _setView(v);
+  renderStepper(); renderHowto(); ctaBar(v);
+};
+render = function(){ _render(); renderStepper(); if(currentView === 'library') ctaBar('library'); };
+buildPreview = function(){ _buildPreview(); if(currentView === 'builder') ctaBar('builder'); };
+
+setView('library');
