@@ -10,9 +10,14 @@ const TYPES = ['Lottie','GIF','Video','SVG','Rive','CSS/JS'];
 const KEY = 'animlib.items.v1';
 
 const SEED = [
-  { name:'Loading dots', url:'https://lottie.host/embed/placeholder/loader.json', type:'Lottie',
-    section:'Loader / Preloader', project:'legalsetu.co.in', owner:'Team', tags:['loader','minimal'],
-    notes:'Replace URL with the real Lottie link.' }
+  { name:'Hero orbit', url:'https://assets10.lottiefiles.com/packages/lf20_yzoqyyqf.json', type:'Lottie',
+    section:'Hero / Banner', project:'demo', owner:'Team', tags:['hero','abstract'], notes:'Sample asset — replace with yours.' },
+  { name:'Loading dots', url:'https://assets2.lottiefiles.com/packages/lf20_kkflmtur.json', type:'Lottie',
+    section:'Loader / Preloader', project:'demo', owner:'Team', tags:['loader'], notes:'Sample asset.' },
+  { name:'Feature icon', url:'https://assets9.lottiefiles.com/packages/lf20_ktwnwv5m.json', type:'Lottie',
+    section:'Icons', project:'demo', owner:'Team', tags:['icon'], notes:'Sample asset.' },
+  { name:'Success check', url:'https://assets5.lottiefiles.com/packages/lf20_jcikwtux.json', type:'Lottie',
+    section:'Success / Error', project:'demo', owner:'Team', tags:['success'], notes:'Sample asset.' }
 ];
 
 let items = load();

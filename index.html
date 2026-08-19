@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Animation Library — Team Dashboard</title>
+<title>AnimLib Studio — Animation Library & Landing Page Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
@@ -11,77 +11,131 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="brand"><span class="dot"></span><div><h1>Anim<span>Lib</span></h1><p>Team animation storage</p></div></div>
-
-  <nav id="sectionNav" class="nav"></nav>
+  <div class="brand"><span class="dot"></span><div><h1>Anim<span>Lib</span></h1><p>Library &amp; page builder</p></div></div>
 
   <div class="side-block">
-    <h3>Type</h3>
+    <h3>Workspace</h3>
+    <nav id="viewNav" class="nav">
+      <button data-view="library" class="active"><span>🎬 Animation Library</span></button>
+      <button data-view="brand"><span>🎨 Brand Kit</span></button>
+      <button data-view="builder"><span>🧩 Page Builder</span></button>
+    </nav>
+  </div>
+
+  <div class="side-block" id="libFilters">
+    <h3>Sections</h3>
+    <nav id="sectionNav" class="nav"></nav>
+    <h3 style="margin-top:16px">Type</h3>
     <div id="typeNav" class="chips"></div>
   </div>
 
   <div class="side-foot">
-    <button class="btn ghost sm" id="exportBtn">Export JSON</button>
-    <button class="btn ghost sm" id="importBtn">Import JSON</button>
+    <button class="btn ghost sm" id="exportBtn">Export library JSON</button>
+    <button class="btn ghost sm" id="importBtn">Import library JSON</button>
     <input type="file" id="importFile" accept="application/json" hidden />
   </div>
 </aside>
 
 <main class="main">
-  <header class="topbar">
-    <div class="search">
-      <svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
-      <input id="search" type="search" placeholder="Search name, tag, project, owner…" />
+  <!-- ===== LIBRARY VIEW ===== -->
+  <div id="view-library">
+    <header class="topbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
+        <input id="search" type="search" placeholder="Search name, tag, project, owner…" />
+      </div>
+      <div class="topbar-actions">
+        <select id="sortBy" class="select">
+          <option value="new">Newest</option><option value="name">Name A–Z</option><option value="used">Most used</option>
+        </select>
+        <button class="btn primary" id="addBtn">+ Import Link</button>
+      </div>
+    </header>
+    <section class="stats" id="stats"></section>
+    <section class="section-head"><h2 id="viewTitle">All Animations</h2><span id="viewCount" class="muted"></span></section>
+    <section id="grid" class="grid"></section>
+    <div id="empty" class="empty" hidden>
+      <p>No animations here yet.</p>
+      <button class="btn primary" onclick="document.getElementById('addBtn').click()">Import your first link</button>
     </div>
-    <div class="topbar-actions">
-      <select id="sortBy" class="select">
-        <option value="new">Newest</option>
-        <option value="name">Name A–Z</option>
-        <option value="used">Most used</option>
+  </div>
+
+  <!-- ===== BRAND KIT VIEW ===== -->
+  <div id="view-brand" hidden>
+    <header class="topbar"><h2 style="flex:1">🎨 Brand Kit</h2>
+      <button class="btn ghost" id="resetBrand">Reset</button>
+      <button class="btn primary" id="toBuilder">Next: Page Builder →</button>
+    </header>
+    <p class="muted" style="margin:-8px 0 20px">Client information used to generate the landing page preview.</p>
+    <div class="panel-2col">
+      <form id="brandForm" class="form panel">
+        <div class="row">
+          <label>Brand name<input id="b_name" placeholder="LegalSetu" /></label>
+          <label>Tagline<input id="b_tagline" placeholder="Legal help, simplified." /></label>
+        </div>
+        <label>Logo URL (or leave empty for text logo)<input id="b_logo" placeholder="https://…/logo.svg" /></label>
+        <div class="row">
+          <label>Primary color<input id="b_primary" type="color" value="#6c5ce7" /></label>
+          <label>Accent color<input id="b_accent" type="color" value="#00d4a0" /></label>
+          <label>Theme<select id="b_theme"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+        </div>
+        <div class="row">
+          <label>Font<select id="b_font">
+            <option>Inter</option><option>Poppins</option><option>Manrope</option>
+            <option>DM Sans</option><option>Playfair Display</option><option>Space Grotesk</option>
+          </select></label>
+          <label>Corner radius<select id="b_radius">
+            <option value="4">Sharp</option><option value="12" selected>Soft</option><option value="26">Pill</option>
+          </select></label>
+        </div>
+        <div class="row">
+          <label>Hero headline<input id="b_headline" placeholder="Animations that sell your product" /></label>
+          <label>CTA button text<input id="b_cta" placeholder="Get started" /></label>
+        </div>
+        <label>Hero sub-text<textarea id="b_sub" rows="2" placeholder="One or two lines about the business."></textarea></label>
+        <label>Industry / notes<input id="b_industry" placeholder="Legal tech · B2C" /></label>
+        <div class="modal-foot"><button type="submit" class="btn primary">Save brand kit</button></div>
+      </form>
+      <div class="panel brand-preview" id="brandPreview"></div>
+    </div>
+  </div>
+
+  <!-- ===== BUILDER VIEW ===== -->
+  <div id="view-builder" hidden>
+    <header class="topbar"><h2 style="flex:1">🧩 Page Builder</h2>
+      <select id="deviceSel" class="select">
+        <option value="100%">Desktop</option><option value="768px">Tablet</option><option value="390px">Mobile</option>
       </select>
-      <button class="btn primary" id="addBtn">+ Import Link</button>
+      <button class="btn ghost" id="openTab">Open full page ↗</button>
+      <button class="btn ghost" id="downloadPage">Download HTML</button>
+      <button class="btn primary" id="refreshPreview">↻ Rebuild preview</button>
+    </header>
+    <p class="muted" style="margin:-8px 0 18px">Assign an animation to each page section, then preview the generated landing page.</p>
+    <div class="panel-2col builder">
+      <div class="panel slots" id="slots"></div>
+      <div class="preview-wrap">
+        <div class="preview-frame"><iframe id="pagePreview" title="Landing page preview"></iframe></div>
+      </div>
     </div>
-  </header>
-
-  <section class="stats" id="stats"></section>
-
-  <section class="section-head">
-    <h2 id="viewTitle">All Animations</h2>
-    <span id="viewCount" class="muted"></span>
-  </section>
-
-  <section id="grid" class="grid"></section>
-  <div id="empty" class="empty" hidden>
-    <p>No animations here yet.</p>
-    <button class="btn primary" onclick="document.getElementById('addBtn').click()">Import your first link</button>
   </div>
 </main>
 
-<!-- Add / Edit modal -->
+<!-- Add / Edit animation modal -->
 <div class="modal" id="modal" hidden>
   <div class="modal-card">
-    <div class="modal-head">
-      <h3 id="modalTitle">Import animation link</h3>
-      <button class="icon-btn" id="closeModal">&times;</button>
-    </div>
+    <div class="modal-head"><h3 id="modalTitle">Import animation link</h3><button class="icon-btn" id="closeModal">&times;</button></div>
     <form id="animForm" class="form">
       <input type="hidden" id="f_id" />
       <label>Animation URL <span class="req">*</span>
-        <input id="f_url" type="url" required placeholder="https://lottie.host/....json  ·  .gif  ·  .mp4  ·  .riv" />
-      </label>
+        <input id="f_url" type="url" required placeholder="https://lottie.host/….json · .gif · .mp4 · .riv" /></label>
       <div class="row">
         <label>Name <span class="req">*</span><input id="f_name" required placeholder="Hero loader" /></label>
-        <label>Type
-          <select id="f_type">
-            <option>Lottie</option><option>GIF</option><option>Video</option>
-            <option>SVG</option><option>Rive</option><option>CSS/JS</option>
-          </select>
-        </label>
+        <label>Type<select id="f_type">
+          <option>Lottie</option><option>GIF</option><option>Video</option>
+          <option>SVG</option><option>Rive</option><option>CSS/JS</option></select></label>
       </div>
       <div class="row">
-        <label>Used in section <span class="req">*</span>
-          <select id="f_section"></select>
-        </label>
+        <label>Used in section <span class="req">*</span><select id="f_section"></select></label>
         <label>Project / Website<input id="f_project" placeholder="legalsetu.co.in" /></label>
       </div>
       <div class="row">
@@ -99,5 +153,6 @@
 
 <div id="toast" class="toast" hidden></div>
 <script src="app.js"></script>
+<script src="studio.js"></script>
 </body>
 </html>

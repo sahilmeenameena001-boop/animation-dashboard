@@ -1,0 +1,7 @@
+{
+  "name": "animlib-studio",
+  "version": "1.0.0",
+  "description": "Team animation library + brand-driven landing page generator",
+  "scripts": { "start": "node server.js", "dev": "node server.js" },
+  "license": "MIT"
+}

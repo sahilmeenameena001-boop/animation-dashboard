@@ -1,31 +1,54 @@
-# AnimLib — Team Animation Dashboard
+# AnimLib Studio
 
-A lightweight library/dashboard to store, tag and reuse animations (Lottie, GIF, video, SVG, Rive, CSS/JS) across our websites.
+A team dashboard for animation storage **+ a Pomelli-style landing page generator**.
+Store every animation your team uses, fill in the client's brand kit, assign an animation to each
+page section — and the dashboard builds a live landing page preview on localhost.
 
-**Live:** enable GitHub Pages → Settings → Pages → Branch `main` / root.
+## Run locally
 
-## Features
-- **Import Link** button — paste any animation URL, type is auto-detected
-- **Sections** — tag where the animation is used (Hero, Loader, Onboarding, Empty State, Footer, …) and filter by them in the sidebar
-- Filter by **type** (Lottie / GIF / Video / SVG / Rive / CSS-JS), search by name, tag, project or owner
-- Live **previews** (Lottie player, video, GIF/SVG inline)
-- Track **project / website**, **added by**, tags and notes per animation
-- **Copy link** (counts usage), edit, delete
-- **Export / Import JSON** — this is how the team shares the library
+    npm start        # or: node server.js
 
-## Run
-Just open `index.html`, or:
+Then open **http://localhost:5173**. No dependencies, no build step.
 
-    npx serve .
+## The three views
+
+### 🎬 Animation Library
+- **+ Import Link** — paste any animation URL (type auto-detected: Lottie / GIF / Video / SVG / Rive / CSS-JS)
+- Sidebar filters by **section** (Hero, Loader, Onboarding, Empty State, Footer, …) and by type
+- Live previews, search, sort, tags, project, added-by, notes
+- **Copy link** (usage counter), edit, delete
+- **Export / Import JSON** — how the team shares one library
+
+### 🎨 Brand Kit
+Client information that drives the generated page: brand name, tagline, logo URL, primary &
+accent colors, light/dark theme, font, corner radius, hero headline, sub-text, CTA label, industry.
+A live brand card previews it as you type.
+
+### 🧩 Page Builder
+10 page slots — **Preloader, Header, Hero, Hero background, Features, Showcase/About, Stats band,
+Testimonials, CTA band, Footer**. For each slot pick an animation from the library, choose its size
+and whether it loops. The right pane renders the **full generated landing page** in an iframe with
+Desktop / Tablet / Mobile widths.
+
+- **Open full page ↗** — the generated page in a new tab
+- **Download HTML** — one self-contained `.html` file (brand CSS + your animation links) to hand to
+  development, or drop back into this folder and serve it at `http://localhost:5173/<file>.html`
 
 ## Data
-Stored in browser `localStorage` (key `animlib.items.v1`) — per person, per browser.
-To share with the team: **Export JSON** → commit the file / send it → teammates **Import JSON**.
+Everything lives in browser `localStorage`:
+`animlib.items.v1` (library), `animlib.brand.v1` (brand kit), `animlib.layout.v1` (slot assignments).
+Share via **Export / Import JSON**.
 
 ## Files
-- `index.html` — layout
-- `styles.css` — dark UI theme
-- `app.js` — state, filters, rendering, import/export
+| File | Purpose |
+|---|---|
+| `index.html` | Layout for all three views |
+| `styles.css` | Dashboard theme |
+| `app.js` | Library: state, filters, cards, import/export |
+| `studio.js` | Brand kit, page slots, landing-page generator |
+| `server.js` | Zero-dependency static server (port 5173) |
 
-## Add a section
-Edit the `SECTIONS` array at the top of `app.js`.
+## Customise
+- Library sections → `SECTIONS` in `app.js`
+- Page slots → `PAGE_SLOTS` in `studio.js`
+- Generated page markup/CSS → `pageCSS()` and `buildPageHTML()` in `studio.js`
