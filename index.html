@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Animation Library — Team Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><span class="dot"></span><div><h1>Anim<span>Lib</span></h1><p>Team animation storage</p></div></div>
+
+  <nav id="sectionNav" class="nav"></nav>
+
+  <div class="side-block">
+    <h3>Type</h3>
+    <div id="typeNav" class="chips"></div>
+  </div>
+
+  <div class="side-foot">
+    <button class="btn ghost sm" id="exportBtn">Export JSON</button>
+    <button class="btn ghost sm" id="importBtn">Import JSON</button>
+    <input type="file" id="importFile" accept="application/json" hidden />
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
+      <input id="search" type="search" placeholder="Search name, tag, project, owner…" />
+    </div>
+    <div class="topbar-actions">
+      <select id="sortBy" class="select">
+        <option value="new">Newest</option>
+        <option value="name">Name A–Z</option>
+        <option value="used">Most used</option>
+      </select>
+      <button class="btn primary" id="addBtn">+ Import Link</button>
+    </div>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="section-head">
+    <h2 id="viewTitle">All Animations</h2>
+    <span id="viewCount" class="muted"></span>
+  </section>
+
+  <section id="grid" class="grid"></section>
+  <div id="empty" class="empty" hidden>
+    <p>No animations here yet.</p>
+    <button class="btn primary" onclick="document.getElementById('addBtn').click()">Import your first link</button>
+  </div>
+</main>
+
+<!-- Add / Edit modal -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="modalTitle">Import animation link</h3>
+      <button class="icon-btn" id="closeModal">&times;</button>
+    </div>
+    <form id="animForm" class="form">
+      <input type="hidden" id="f_id" />
+      <label>Animation URL <span class="req">*</span>
+        <input id="f_url" type="url" required placeholder="https://lottie.host/....json  ·  .gif  ·  .mp4  ·  .riv" />
+      </label>
+      <div class="row">
+        <label>Name <span class="req">*</span><input id="f_name" required placeholder="Hero loader" /></label>
+        <label>Type
+          <select id="f_type">
+            <option>Lottie</option><option>GIF</option><option>Video</option>
+            <option>SVG</option><option>Rive</option><option>CSS/JS</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>Used in section <span class="req">*</span>
+          <select id="f_section"></select>
+        </label>
+        <label>Project / Website<input id="f_project" placeholder="legalsetu.co.in" /></label>
+      </div>
+      <div class="row">
+        <label>Added by<input id="f_owner" placeholder="Your name" /></label>
+        <label>Tags (comma separated)<input id="f_tags" placeholder="loader, dark, minimal" /></label>
+      </div>
+      <label>Notes<textarea id="f_notes" rows="2" placeholder="Where exactly it is used, size, fps, license…"></textarea></label>
+      <div class="modal-foot">
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn primary" id="saveBtn">Save animation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
