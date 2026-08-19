@@ -176,3 +176,6 @@ input[type=color]{padding:3px;height:40px;cursor:pointer}
 .cta-bar .btn{white-space:nowrap}
 .btn.big{padding:13px 24px;font-size:14.5px}
 .cta-bar.hero-cta{background:linear-gradient(120deg,rgba(108,92,231,.22),transparent);border-color:var(--accent)}
+
+.form code{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:11.5px}
+.form textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5}

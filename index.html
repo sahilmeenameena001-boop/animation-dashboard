@@ -105,6 +105,11 @@
   <!-- ===== BUILDER VIEW ===== -->
   <div id="view-builder" hidden>
     <header class="topbar"><h2 style="flex:1">🧩 Page Builder</h2>
+      <select id="pageSrcSel" class="select" title="Which page to preview the animations in">
+        <option value="template">Built-in template</option>
+        <option value="custom">My own landing page</option>
+      </select>
+      <button class="btn ghost" id="myPageBtn">Use my page…</button>
       <select id="deviceSel" class="select">
         <option value="100%">Desktop</option><option value="768px">Tablet</option><option value="390px">Mobile</option>
       </select>
@@ -148,6 +153,35 @@
       <div class="modal-foot">
         <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
         <button type="submit" class="btn primary" id="saveBtn">Save animation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Use your own landing page -->
+<div class="modal" id="pageModal" hidden style="display:none">
+  <div class="modal-card">
+    <div class="modal-head"><h3>Use my own landing page</h3><button class="icon-btn" id="closePage">&times;</button></div>
+    <form id="pageForm" class="form">
+      <p class="muted" style="margin:0;font-size:12.5px;line-height:1.6">
+        Paste your page's HTML (or upload the <b>.html</b> file). The dashboard drops your chosen animations into it
+        so you can see them working in your real sections.<br />
+        Want exact control? Put an empty tag where each animation should go:
+        <code>&lt;div data-anim="hero"&gt;&lt;/div&gt;</code> — valid names:
+        <code>preloader, header, hero, background, features, showcase, stats, testimonials, cta, footer</code>.
+        Without markers we place them automatically using your <code>header</code>, <code>footer</code>,
+        <code>.hero</code>, <code>.features</code>, <code>#about</code>, <code>.cta</code> sections.
+      </p>
+      <div class="row">
+        <label>Upload .html file<input type="file" id="pageFile" accept=".html,text/html" /></label>
+        <label class="switch" style="align-self:end;padding-bottom:10px">
+          <input type="checkbox" id="pageOutline" /> outline the animation spots</label>
+      </div>
+      <label>Or paste your page HTML
+        <textarea id="pageHtml" rows="12" placeholder="&lt;!DOCTYPE html&gt;&lt;html&gt;…"></textarea></label>
+      <div class="modal-foot">
+        <button type="button" class="btn ghost" id="clearPage">Back to built-in template</button>
+        <button type="submit" class="btn primary">Preview with my page</button>
       </div>
     </form>
   </div>

@@ -48,6 +48,25 @@ Desktop / Tablet / Mobile widths.
 - **Download HTML** — one self-contained `.html` file (brand CSS + your animation links) to hand to
   development, or drop back into this folder and serve it at `http://localhost:5173/<file>.html`
 
+
+### Preview inside your own landing page
+In **Page Builder** switch the dropdown to **My own landing page** (or click **Use my page…**) and either
+upload your `.html` file or paste your page's HTML. The dashboard injects the animations you assigned and
+renders the result — so you see them working in *your* real sections, not a demo template.
+
+- **Automatic placement** — animations are matched to your `header`, `footer`, `.hero`, `.features`,
+  `#about`, `.stats`, `.testimonials`, `.cta` / `#contact` elements.
+- **Exact placement** — put an empty tag where you want each one:
+  `<div data-anim="hero"></div>`. Valid names: `preloader, header, hero, background, features,
+  showcase, stats, testimonials, cta, footer`. If your page has any marker, automatic placement is switched off.
+- **Outline the animation spots** — a checkbox that draws a dashed border around every injected slot.
+- Backgrounds (`background`, `cta`) are injected as a full-cover layer behind the section; the preloader
+  becomes a full-screen overlay that fades after 1.8s.
+- **Open full page / Download HTML** work the same, and export your page with the animations baked in.
+
+Note: a live *URL* cannot be used — browsers block scripts from modifying another site's page. Save the page
+(Ctrl+S) or copy its HTML and use that.
+
 ## Data
 Everything lives in browser `localStorage`:
 `animlib.items.v1` (library), `animlib.brand.v1` (brand kit), `animlib.layout.v1` (slot assignments).

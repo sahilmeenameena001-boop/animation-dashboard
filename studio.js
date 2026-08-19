@@ -262,7 +262,7 @@ ${pre ? `<script>setTimeout(function(){var p=document.getElementById('preloader'
 /* ---------- preview / export ---------- */
 let pageBlobURL = null;
 function buildPreview(){
-  const html = buildPageHTML();
+  const html = pageOutput();
   q('#pagePreview').srcdoc = html;
   if(pageBlobURL) URL.revokeObjectURL(pageBlobURL);
   pageBlobURL = URL.createObjectURL(new Blob([html], {type:'text/html'}));
@@ -272,7 +272,7 @@ q('#deviceSel').onchange = e => { q('#pagePreview').style.width = e.target.value
 q('#openTab').onclick = () => { if(!pageBlobURL) buildPreview(); window.open(pageBlobURL, '_blank'); };
 q('#downloadPage').onclick = () => {
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([buildPageHTML()], {type:'text/html'}));
+  a.href = URL.createObjectURL(new Blob([pageOutput()], {type:'text/html'}));
   a.download = (brand.name || 'landing').toLowerCase().replace(/\s+/g,'-') + '-landing.html';
   a.click(); URL.revokeObjectURL(a.href);
   toast('landing page downloaded — drop it in this folder and open http://localhost:5173/');
@@ -365,8 +365,11 @@ function ctaBar(view){
   if(view === 'builder'){
     const filled = Object.values(layout).filter(l => l && l.animId).length;
     host.className = 'cta-bar hero-cta';
+    const src = (typeof pageSrc !== 'undefined' && pageSrc.mode === 'custom' && pageSrc.html)
+      ? 'your own page' : 'the built-in template';
     host.innerHTML = `<div class="txt"><b>${filled} of ${PAGE_SLOTS.length} page sections have an animation</b>
-      <small>Press the button to build the landing page — it opens in a new tab, exactly as visitors would see it.</small></div>
+      <small>Previewing in <b>${src}</b> — press the button to build it, it opens in a new tab exactly as visitors would see it.
+      Use “Use my page…” above to drop these animations into your real website instead.</small></div>
       <button class="btn ghost" id="ctaDownload">Download page file</button>
       <button class="btn primary big" id="ctaGenerate">▶ Generate landing page preview</button>`;
     q('#ctaGenerate').onclick = () => {
@@ -391,3 +394,131 @@ render = function(){ _render(); renderStepper(); if(currentView === 'library') c
 buildPreview = function(){ _buildPreview(); if(currentView === 'builder') ctaBar('builder'); };
 
 setView('library');
+
+/* ================= use your own landing page ================= */
+const PAGE_KEY = 'animlib.page.v1';
+let pageSrc = readJSON(PAGE_KEY, { mode:'template', html:'', name:'', outline:false });
+
+/* where each slot goes when the user's HTML has no data-anim markers */
+const AUTO_MAP = {
+  header:      ['header','.header','#header','nav'],
+  hero:        ['.hero','#hero','[class*=hero]','main > section:first-of-type','section:first-of-type'],
+  background:  ['.hero','#hero','main > section:first-of-type','section:first-of-type'],
+  features:    ['.features','#features','[class*=feature]'],
+  showcase:    ['.about','#about','[class*=about]','[class*=showcase]'],
+  stats:       ['.stats','#stats','[class*=stat]'],
+  testimonials:['.testimonials','#testimonials','[class*=testimonial]','[class*=review]'],
+  cta:         ['.cta','#cta','[class*=cta]','#contact','.contact'],
+  footer:      ['footer','.footer','#footer']
+};
+const BG_SLOTS = ['background','cta'];
+
+function pageOutput(){
+  return (pageSrc.mode === 'custom' && pageSrc.html.trim())
+    ? injectCustom(pageSrc.html) : buildPageHTML();
+}
+
+function injectCustom(raw){
+  const doc = new DOMParser().parseFromString(raw, 'text/html');
+  if(!doc.head) return raw;
+
+  /* lottie-player runtime, only if missing */
+  if(!doc.querySelector('script[src*="lottie-player"]')){
+    const s = doc.createElement('script');
+    s.src = 'https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js';
+    doc.head.appendChild(s);
+  }
+  const st = doc.createElement('style');
+  st.textContent = `.animlib-slot{display:block;max-width:100%}
+.animlib-slot.inline{display:inline-block;vertical-align:middle;margin:0 8px}
+.animlib-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.35;display:grid;place-items:center}
+.animlib-bg>*{width:100%;height:100%}
+${pageSrc.outline ? '.animlib-slot,.animlib-bg{outline:2px dashed #00d4a0;outline-offset:3px}' : ''}`;
+  doc.head.appendChild(st);
+
+  const marked = doc.querySelectorAll('[data-anim]').length > 0;
+
+  PAGE_SLOTS.forEach(s => {
+    const key = s.key, html = embed(key);
+    if(!html) return;
+
+    if(key === 'preloader'){
+      const ov = doc.createElement('div');
+      ov.id = 'animlib-preloader';
+      ov.setAttribute('style','position:fixed;inset:0;background:#0c0e14;display:grid;place-items:center;z-index:9999;transition:opacity .5s');
+      ov.innerHTML = html;
+      doc.body.insertBefore(ov, doc.body.firstChild);
+      const sc = doc.createElement('script');
+      sc.textContent = "setTimeout(function(){var p=document.getElementById('animlib-preloader');if(!p)return;p.style.opacity=0;setTimeout(function(){p.remove()},500)},1800)";
+      doc.body.appendChild(sc);
+      return;
+    }
+
+    /* 1. explicit markers win:  <div data-anim="hero"></div> */
+    const targets = Array.prototype.slice.call(doc.querySelectorAll('[data-anim="' + key + '"]'));
+    if(targets.length){
+      targets.forEach(t => { t.innerHTML = html; t.classList.add('animlib-slot'); });
+      return;
+    }
+    if(marked) return; /* user marked their page — don't guess elsewhere */
+
+    /* 2. otherwise guess from common tags / class names */
+    let host = null;
+    (AUTO_MAP[key] || []).some(sel => { try{ host = doc.querySelector(sel); }catch(e){} return !!host; });
+    if(!host) return;
+
+    if(BG_SLOTS.indexOf(key) > -1){
+      if(!host.style.position) host.style.position = 'relative';
+      const layer = doc.createElement('div');
+      layer.className = 'animlib-bg';
+      layer.innerHTML = html;
+      host.insertBefore(layer, host.firstChild);
+    } else {
+      const box = doc.createElement('div');
+      box.className = 'animlib-slot' + (key === 'header' || key === 'footer' ? ' inline' : '');
+      box.innerHTML = html;
+      if(key === 'header' || key === 'footer') host.appendChild(box);
+      else host.insertBefore(box, host.firstChild);
+    }
+  });
+
+  return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+}
+
+/* ---------- "use my own page" UI ---------- */
+function savePageSrc(){ writeJSON(PAGE_KEY, pageSrc); }
+function openPageModal(){
+  q('#pageHtml').value = pageSrc.html || '';
+  q('#pageOutline').checked = !!pageSrc.outline;
+  q('#pageModal').hidden = false; q('#pageModal').style.display = 'flex';
+}
+function closePageModal(){ q('#pageModal').hidden = true; q('#pageModal').style.display = 'none'; }
+
+q('#myPageBtn').onclick = openPageModal;
+q('#closePage').onclick = closePageModal;
+q('#pageModal').onclick = e => { if(e.target.id === 'pageModal') closePageModal(); };
+q('#pageFile').onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => { q('#pageHtml').value = r.result; pageSrc.name = f.name; };
+  r.readAsText(f);
+};
+q('#pageForm').onsubmit = e => {
+  e.preventDefault();
+  const html = q('#pageHtml').value.trim();
+  if(!html){ toast('Paste your page HTML or upload a .html file'); return; }
+  pageSrc.html = html; pageSrc.outline = q('#pageOutline').checked; pageSrc.mode = 'custom';
+  savePageSrc(); q('#pageSrcSel').value = 'custom';
+  closePageModal(); buildPreview();
+  toast('Your page is now previewed with the animations');
+};
+q('#clearPage').onclick = () => {
+  pageSrc.mode = 'template'; savePageSrc(); q('#pageSrcSel').value = 'template';
+  closePageModal(); buildPreview(); toast('Back to the built-in template');
+};
+q('#pageSrcSel').onchange = e => {
+  if(e.target.value === 'custom' && !pageSrc.html.trim()){ openPageModal(); return; }
+  pageSrc.mode = e.target.value; savePageSrc(); buildPreview();
+};
+q('#pageSrcSel').value = pageSrc.mode;
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closePageModal(); });
