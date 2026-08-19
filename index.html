@@ -6,7 +6,7 @@
 <title>AnimLib Studio — Animation Library & Landing Page Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css?v=3" />
 <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
 </head>
 <body>
@@ -56,7 +56,7 @@
     <section class="stats" id="stats"></section>
     <section class="section-head"><h2 id="viewTitle">All Animations</h2><span id="viewCount" class="muted"></span></section>
     <section id="grid" class="grid"></section>
-    <div id="empty" class="empty" hidden>
+    <div id="empty" class="empty" hidden style="display:none">
       <p>No animations here yet.</p>
       <button class="btn primary" onclick="document.getElementById('addBtn').click()">Import your first link</button>
     </div>
@@ -123,7 +123,7 @@
 </main>
 
 <!-- Add / Edit animation modal -->
-<div class="modal" id="modal" hidden>
+<div class="modal" id="modal" hidden style="display:none">
   <div class="modal-card">
     <div class="modal-head"><h3 id="modalTitle">Import animation link</h3><button class="icon-btn" id="closeModal">&times;</button></div>
     <form id="animForm" class="form">
@@ -154,7 +154,7 @@
 </div>
 
 <div id="toast" class="toast" hidden></div>
-<script src="app.js"></script>
-<script src="studio.js"></script>
+<script src="app.js?v=3"></script>
+<script src="studio.js?v=3"></script>
 </body>
 </html>

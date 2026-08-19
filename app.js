@@ -110,7 +110,7 @@ function renderGrid(){
   const list = visible();
   $('#viewTitle').textContent = filter.section === 'all' ? 'All Animations' : filter.section;
   $('#viewCount').textContent = `${list.length} item${list.length===1?'':'s'}`;
-  $('#empty').hidden = list.length > 0;
+  var _e = $('#empty'); _e.hidden = list.length > 0; _e.style.display = list.length ? 'none' : 'flex';
   $('#grid').innerHTML = list.map(a => `
     <article class="card">
       <div class="preview">${previewHTML(a)}<span class="badge">${esc(a.type)}</span></div>
@@ -162,10 +162,10 @@ function openModal(id){
   $('#f_owner').value = (a && a.owner) || localStorage.getItem('animlib.owner') || '';
   $('#f_tags').value = ((a && a.tags) || []).join(', ');
   $('#f_notes').value = a && a.notes || '';
-  $('#modal').hidden = false;
+  $('#modal').hidden = false; $('#modal').style.display = 'flex';
   $('#f_url').focus();
 }
-function closeModal(){ $('#modal').hidden = true; }
+function closeModal(){ $('#modal').hidden = true; $('#modal').style.display = 'none'; }
 
 $('#addBtn').onclick = () => openModal();
 $('#closeModal').onclick = closeModal;
@@ -218,5 +218,5 @@ $('#importFile').onchange = e => {
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 
 $('#f_section').innerHTML = SECTIONS.map(s => `<option>${s}</option>`).join('');
-$('#modal').hidden = true;
+closeModal();
 render();
