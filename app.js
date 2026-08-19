@@ -217,4 +217,6 @@ $('#importFile').onchange = e => {
 };
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 
+$('#f_section').innerHTML = SECTIONS.map(s => `<option>${s}</option>`).join('');
+$('#modal').hidden = true;
 render();

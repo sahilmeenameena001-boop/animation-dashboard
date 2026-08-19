@@ -143,3 +143,6 @@ input[type=color]{padding:3px;height:40px;cursor:pointer}
 
 @media(max-width:1080px){ .panel-2col,.panel-2col.builder{grid-template-columns:1fr}
   .brand-preview,.preview-wrap{position:static} }
+
+/* hidden attribute must win over the display rules above */
+[hidden]{display:none !important}
