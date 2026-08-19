@@ -33,6 +33,17 @@ Completed steps get a green tick, and any step can be clicked to jump straight t
 - **Copy link** (usage counter), edit, delete
 - **Export / Import JSON** — how the team shares one library
 
+### 🌐 Free Animations
+A starter pack of 14 verified free Lottie animations (heroes, loaders, success ticks, icons, backgrounds,
+onboarding, mobile) with live previews — **+ Add to library** puts one in your library instantly, or
+**Add all shown** adds a whole category. Already-added items show ✓ and cannot be duplicated.
+
+Below it, 12 sites we source free animations from — LottieFiles, IconScout, Lordicon, Icons8, useAnimations,
+LottieFlow, Rive Community, Mixkit, Coverr, Pixabay, SVGator, Storyset — each with what you get and its
+licence note. Open one, copy the animation's direct link, and paste it into **+ Import Link**.
+
+> Licences differ per asset. The starter pack is free to use but check the source before commercial use.
+
 ### 🎨 Brand Kit
 Client information that drives the generated page: brand name, tagline, logo URL, primary &
 accent colors, light/dark theme, font, corner radius, hero headline, sub-text, CTA label, industry.
@@ -79,6 +90,7 @@ Share via **Export / Import JSON**.
 | `styles.css` | Dashboard theme |
 | `app.js` | Library: state, filters, cards, import/export |
 | `studio.js` | Brand kit, page slots, landing-page generator |
+| `sources.js` | Free-animation starter pack + source sites |
 | `server.js` | Zero-dependency static server (port 5173) |
 
 ## Customise

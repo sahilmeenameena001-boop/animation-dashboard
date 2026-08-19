@@ -17,6 +17,7 @@
     <h3>Workspace</h3>
     <nav id="viewNav" class="nav">
       <button data-view="library" class="active"><span>🎬 Animation Library</span></button>
+      <button data-view="discover"><span>🌐 Free Animations</span></button>
       <button data-view="brand"><span>🎨 Brand Kit</span></button>
       <button data-view="builder"><span>🧩 Page Builder</span></button>
     </nav>
@@ -60,6 +61,19 @@
       <p>No animations here yet.</p>
       <button class="btn primary" onclick="document.getElementById('addBtn').click()">Import your first link</button>
     </div>
+  </div>
+
+  <!-- ===== FREE ANIMATIONS VIEW ===== -->
+  <div id="view-discover" hidden>
+    <header class="topbar"><h2 style="flex:1">🌐 Free Animations</h2>
+      <select id="catFilter" class="select"></select>
+      <button class="btn primary" id="addAllBtn">Add all shown to library</button>
+    </header>
+    <p class="muted" style="margin:-8px 0 20px">Ready-to-use free animations — press <b>+ Add to library</b> and they appear in your library instantly. Below them are the sites we get animations from.</p>
+    <section class="section-head"><h2>Starter pack</h2><span id="catCount" class="muted"></span></section>
+    <section id="catGrid" class="grid"></section>
+    <section class="section-head" style="margin-top:34px"><h2>Where to get more (free)</h2></section>
+    <section id="siteGrid" class="sites"></section>
   </div>
 
   <!-- ===== BRAND KIT VIEW ===== -->
@@ -190,5 +204,6 @@
 <div id="toast" class="toast" hidden></div>
 <script src="app.js?v=3"></script>
 <script src="studio.js?v=3"></script>
+<script src="sources.js?v=3"></script>
 </body>
 </html>

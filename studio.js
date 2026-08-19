@@ -32,7 +32,7 @@ const q = s => document.querySelector(s);
 
 /* ---------- view switching ---------- */
 function setView(v){
-  ['library','brand','builder'].forEach(name => q('#view-'+name).hidden = (name !== v));
+  ['library','discover','brand','builder'].forEach(name => q('#view-'+name).hidden = (name !== v));
   q('#libFilters').style.display = v === 'library' ? '' : 'none';
   document.querySelectorAll('#viewNav button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   if(v === 'brand') fillBrandForm();
@@ -328,7 +328,7 @@ function renderHowto(){
   el.innerHTML = `<h2>Make a landing page in 3 steps</h2>
     <p>No coding needed. Follow the steps and the dashboard builds a real landing page you can look at and share.</p>
     <ol>
-      <li><b>Add animations</b> — <span>click “+ Import Link”, paste the animation link, say where it will be used.</span></li>
+      <li><b>Add animations</b> — <span>click “+ Import Link” and paste a link, or open <b>🌐 Free Animations</b> and add ready-made ones in one click.</span></li>
       <li><b>Add brand details</b> — <span>brand name, logo, colours, headline and button text.</span></li>
       <li><b>Build &amp; preview</b> — <span>choose an animation for the header, hero, footer… and the page appears on the right.</span></li>
     </ol>
@@ -350,6 +350,7 @@ function ctaBar(view){
     host.className = 'cta-bar' + (n ? ' hero-cta' : '');
     host.innerHTML = `<div class="txt"><b>${n ? `${n} animation${n===1?'':'s'} in your library` : 'Add your first animation'}</b>
       <small>${n ? 'Next, tell us about the brand — name, logo and colours for the landing page.' : 'Click “+ Import Link” above and paste an animation link to begin.'}</small></div>
+      <button class="btn ghost" data-go="discover">🌐 Browse free animations</button>
       ${n ? '<button class="btn primary big" data-go="brand">Step 2: Add brand details →</button>'
           : '<button class="btn primary big" id="ctaAdd">+ Import Link</button>'}`;
     if(!n) q('#ctaAdd').onclick = () => q('#addBtn').click();
@@ -388,7 +389,7 @@ const _setView = setView, _render = render, _buildPreview = buildPreview;
 setView = function(v){
   currentView = v;
   _setView(v);
-  renderStepper(); renderHowto(); ctaBar(v);
+  renderStepper(); renderHowto(); if(v !== 'discover') ctaBar(v);
 };
 render = function(){ _render(); renderStepper(); if(currentView === 'library') ctaBar('library'); };
 buildPreview = function(){ _buildPreview(); if(currentView === 'builder') ctaBar('builder'); };
